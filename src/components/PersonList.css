@@ -4,7 +4,7 @@
   
   .person-list-item {
     margin-top: 10px;
-    color: white;
+    color: rgb(19, 48, 18);
     transition: background-color 1s;
   }
   
@@ -12,11 +12,20 @@
     padding-left: 25px;
     padding-bottom: 5px;
   }
-  
-  .person-list-item:hover {
-    background-color: #26a69a !important;
+
+  .person-list-item thead tr {
+    position: relative;
+  }
+
+  .person-list-item tr .with-input >input {
+    width: 80%;
   }
   
+  .person-list-item tbody tr:hover {
+    background-color: #69c9bf !important;
+  }
+  /* top: 89px;
+  position: absolute; */
   .remove-person-item {
     float: right;
     right: 20px;
@@ -31,9 +40,6 @@
     margin-top: 150px;
   }
 
-  /* #person-add-form button[type="submit"] {
-    margin-top: 20px;
-  } */
   
   @keyframes slidein {
     from {

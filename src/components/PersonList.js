@@ -27,10 +27,9 @@ class PersonList extends Component {
   componentDidUpdate() {
     var elems = document.querySelectorAll('.datepicker');
     var options = {
-      onSelect: this.handleInputDateChange,
-      format: 'dd/mm/yyyy'
+      onSelect: this.handleInputDateChange
     };
-    var instances = M.Datepicker.init(elems, options);
+    M.Datepicker.init(elems, options);
   }
 
   // Handling fields changes 
@@ -39,7 +38,8 @@ class PersonList extends Component {
   }
 
   handleInputDateChange(value) {
-    this.setState({ birthDateValue: new Date(value).toLocaleDateString() });
+    var options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    this.setState({ birthDateValue: new Date(value).toLocaleDateString("en-GB", options) });
   }
 
   handleInputEmailChange(e) {
@@ -139,15 +139,15 @@ class PersonList extends Component {
     });
     if (!_.isEmpty(people)) {
       return (
-        <div className="col s10 offset-s1 person-list-item teal">
+        <div className="col s10 offset-s1 person-list-item">
           <table>
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Birth date</th>
-                <th>Email</th>
-                <th>N° of children</th>
-                <th></th>
+                <th width="30%" className="with-input"><input type="text" id="filterName" /> Name</th>
+                <th width="10%">Birth date</th>
+                <th width="30%" className="with-input"><input type="text" id="filterEmail" /> Email</th>
+                <th width="20%">N° of children</th>
+                <th width="10%"></th>
               </tr>
             </thead>
             <tbody>

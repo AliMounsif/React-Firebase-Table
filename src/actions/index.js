@@ -11,6 +11,11 @@ export const removePerson = id => async dispatch => {
   peopleRef.child(id).remove();
 };
 
+// filter people by name 
+// export const filterPeopleByName = string => async dispatch => {
+//   peopleRef.chi;
+// };
+
 export const fetchPeople = () => async dispatch => {
   // on() continues to listen for changes to the data on firebase
   peopleRef.on("value", snapshot => {
