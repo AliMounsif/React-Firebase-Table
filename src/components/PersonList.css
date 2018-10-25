@@ -1,0 +1,46 @@
+  .person-list-container {
+    margin-top: 25px;
+  }
+  
+  .person-list-item {
+    margin-top: 10px;
+    color: white;
+    transition: background-color 1s;
+  }
+  
+  .person-list-item tr {
+    padding-left: 25px;
+    padding-bottom: 5px;
+  }
+  
+  .person-list-item:hover {
+    background-color: #26a69a !important;
+  }
+  
+  .remove-person-item {
+    float: right;
+    right: 20px;
+  }
+  
+  #person-add-form {
+    animation-duration: 1s;
+    animation-name: slidein;
+  }
+  
+  #nothing-was-found {
+    margin-top: 150px;
+  }
+
+  /* #person-add-form button[type="submit"] {
+    margin-top: 20px;
+  } */
+  
+  @keyframes slidein {
+    from {
+      opacity: 0;
+    }
+  
+    to {
+      margin-left: 1;
+    }
+  }
