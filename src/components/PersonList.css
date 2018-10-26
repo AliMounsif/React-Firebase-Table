@@ -13,19 +13,19 @@
     padding-bottom: 5px;
   }
 
-  .person-list-item thead tr {
-    position: relative;
-  }
-
-  .person-list-item tr .with-input >input {
-    width: 80%;
+  .person-list-item tr .with-input .input-field {
+    width: 70%;
+    margin: 0 !important;
   }
   
   .person-list-item tbody tr:hover {
     background-color: #69c9bf !important;
   }
-  /* top: 89px;
-  position: absolute; */
+  .person-list-item thead tr th .with-top {
+    top: 27px;
+    position: relative;
+  }
+
   .remove-person-item {
     float: right;
     right: 20px;
@@ -37,9 +37,12 @@
   }
   
   #nothing-was-found {
-    margin-top: 150px;
+    margin-top: 50px;
   }
 
+  .fixed-action-btn label {
+    padding-right: 10px;
+  }
   
   @keyframes slidein {
     from {

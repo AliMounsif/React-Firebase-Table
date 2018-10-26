@@ -6,6 +6,15 @@ import _ from "lodash";
 import * as actions from "../actions";
 import PersonListItem from "./PersonListItem";
 import * as M from "materialize-css";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TableFooter, 
+  TablePagination, 
+} from '@material-ui/core'
 
 class PersonList extends Component {
   constructor(props) {
@@ -20,14 +29,19 @@ class PersonList extends Component {
       nameValue: "",
       birthDateValue: "",
       emailValue: "",
-      numberOfChildrenValue: "0"
+      numberOfChildrenValue: "0",
+      page: 0,
+      rowsPerPage: 5,
     };
   }
   
   componentDidUpdate() {
+    // init materialize datepicker
     var elems = document.querySelectorAll('.datepicker');
     var options = {
-      onSelect: this.handleInputDateChange
+      onSelect: this.handleInputDateChange,
+      format: 'dd/mm/yyyy',
+      yearRange: 130,
     };
     M.Datepicker.init(elems, options);
   }
@@ -58,6 +72,14 @@ class PersonList extends Component {
     addPerson({ name: nameValue, birthDate: birthDateValue, email: emailValue, numberOfChildren: numberOfChildrenValue });
     this.setState({ nameValue: "", birthDateValue: "", emailValue: "", numberOfChildrenValue: "0" });
   }
+
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  }
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
+  };
 
   // rendering the form on click of add button, in absolute position bottom the window 
   renderAddForm() {
@@ -120,7 +142,7 @@ class PersonList extends Component {
             </div>
             <div className="row">
               <div className="col s4 offset-s8">
-                <button className="btn waves-effect waves-light" type="reset" name="action">Cancel</button>
+                <button className="btn waves-effect waves-light" type="reset" name="action">Reset</button>
                 {' '}
                 <button className={submitBtnClass} type="submit" name="action">Submit</button>
               </div>
@@ -132,41 +154,83 @@ class PersonList extends Component {
   }
 
   // renders the list if not empty, otherwise a message of no data
-  renderPeople() {
+  renderTable() {
     const { data } = this.props;
+    const { rowsPerPage, page } = this.state;
     const people = _.map(data, (value, key) => {
       return <PersonListItem key={key} personId={key} person={value} />;
     });
-    if (!_.isEmpty(people)) {
-      return (
-        <div className="col s10 offset-s1 person-list-item">
-          <table>
-            <thead>
-              <tr>
-                <th width="30%" className="with-input"><input type="text" id="filterName" /> Name</th>
-                <th width="10%">Birth date</th>
-                <th width="30%" className="with-input"><input type="text" id="filterEmail" /> Email</th>
-                <th width="20%">N° of children</th>
-                <th width="10%"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {people}
-            </tbody>
-          </table>
-        </div>
-      )
-    }
+
+    /**
+     * try this https://github.com/carlosrocha/react-data-components
+     * and remove unnecessary dependencies
+     */
+
     return (
-      <div className="col s10 offset-s1 center-align">
-      {/* image stored on firebase */}
-        <img
-          alt="Nothing was found"
-          id="nothing-was-found"
-          src="https://firebasestorage.googleapis.com/v0/b/tabular-data-test.appspot.com/o/nothing.png?alt=media&token=00e3b077-b799-4745-a37b-dae244c16150"
-        />
-        <h4>No data available</h4>
-        <p>Click the button in the bottom to START!</p>
+      <div className="col s10 offset-s1 person-list-item">
+        <Table>
+          <TableHead id="peopleList">
+            <TableRow>
+              <TableCell className="with-input">
+                <div className="input-field">                  
+                  <input type="text" id="filterName" onChange={(e) => {
+                      this.props.filterPeople(e.target.value, 'name');;
+                    }} 
+                  />
+                  <i className="small material-icons prefix">filter_list</i>
+                </div>
+                <span>Name</span>
+              </TableCell>
+              <TableCell>
+                <span className="with-top">Birth date</span>
+              </TableCell>
+              <TableCell className="with-input">
+                <div className="input-field">                  
+                  <input type="text" id="filterEmail" onChange={(e) => {
+                      this.props.filterPeople(e.target.value, 'email');;
+                    }} 
+                  />
+                  <i className="small material-icons prefix">filter_list</i>
+                </div>
+                <span>Email</span>
+              </TableCell>
+              <TableCell numeric={true}>
+                <span className="with-top">N° of children</span>
+              </TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {people}
+          </TableBody>
+          <TableFooter>
+              <TableRow>
+                <TablePagination
+                  colSpan={3}
+                  count={people.length}
+                  rowsPerPage={rowsPerPage}
+                  rowsPerPageOptions={15}
+                  page={page}
+                  onChangePage={this.handleChangePage}
+                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                />
+              </TableRow>
+          </TableFooter>
+        </Table>
+        {_.isEmpty(people) ? (
+            <div className="col s10 offset-s1 center-align">
+            {/* image stored on firebase */}
+              <img
+                alt="Nothing was found"
+                id="nothing-was-found"
+                src="https://firebasestorage.googleapis.com/v0/b/tabular-data-test.appspot.com/o/nothing.png?alt=media&token=00e3b077-b799-4745-a37b-dae244c16150"
+              />
+              <h4>No data available</h4>
+            </div>
+          ) 
+          : 
+            ''
+        }
       </div>
     );
   }
@@ -178,13 +242,15 @@ class PersonList extends Component {
 
   render() {
     const { addFormVisible } = this.state;
+    const { data } = this.props;
     return (
       <div className="person-list-container">
         <div className="row">
           {this.renderAddForm()}
-          {this.renderPeople()}
+          {this.renderTable()}
         </div>
         <div className="fixed-action-btn">
+          {_.isEmpty(data) ? <label>Click the button to START!</label> : ''}        
           <button
             onClick={() => this.setState({ addFormVisible: !addFormVisible })}
             className="btn-floating btn-large"

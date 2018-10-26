@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { removePerson } from "../actions";
+import {
+  TableRow,
+  TableCell,
+} from '@material-ui/core'
 
 class PersonListItem extends Component {
   constructor(props) {
@@ -16,20 +20,20 @@ class PersonListItem extends Component {
   render() {
     const { personId, person } = this.props;
     return (
-      <tr key={personId}>
-        <td>{person.name}</td>
-        <td>{person.birthDate}</td>
-        <td>{person.email}</td>
-        <td>{person.numberOfChildren}</td>
-        <td>
+      <TableRow key={personId}>
+        <TableCell>{person.name}</TableCell>
+        <TableCell>{person.birthDate}</TableCell>
+        <TableCell>{person.email}</TableCell>
+        <TableCell>{person.numberOfChildren}</TableCell>
+        <TableCell>
           <span
             onClick={() => this.handleRemoveClick(personId)}
             className="remove-person-item waves-effect waves-light teal lighten-5 teal-text text-darken-4 btn"
           >
             <i className="small material-icons">delete</i>
           </span>
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     );
   }
 }
