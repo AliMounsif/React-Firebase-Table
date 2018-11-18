@@ -1,3 +1,4 @@
+## React + Redux, with Firebase data-table storage
 
 ## What I used
 
@@ -6,12 +7,6 @@
 * Firebase, to store my datatable (with public db and storage to everyone, no rules)
 * Materialize, for some auxiliar css for the form (fields, buttons, icons)
 * Ant Design for table component, filtering, sorting, pagination
-
-## Re-use sortable table
-
-The sortable table it's a component, and it will not affect the code structure if re used, 
-to re use it we could also create a react Component with the table component of Ant and pass to this component our data and columns,
- or other possible options; in this way every time we need to create a table we have already our component that could have a unique design or styles in all the app. 
 
 ## Usage
 
