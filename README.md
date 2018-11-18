@@ -1,4 +1,4 @@
-## React + Redux, with Firebase data-table storage
+## React + Redux, with Firebase data-table db/storage
 
 ## What I used
 
@@ -10,6 +10,8 @@
 
 ## Usage
 
+* create your firebase free app
+* insert your firebase app configuration in config/dev.js
 * install yarn in your pc
 * get in the project directory 
 * run:
