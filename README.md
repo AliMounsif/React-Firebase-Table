@@ -4,7 +4,7 @@
 
 * ReactJS, to develop the technical test, I've also used Redux as a reducer
   - This project was bootstrapped with [Create React App]
-* Firebase, to store my datatable (with public db and storage to everyone, no rules)
+* Firebase, to store my datatable
 * Materialize, for some auxiliar css for the form (fields, buttons, icons)
 * Ant Design for table component, filtering, sorting, pagination
 
