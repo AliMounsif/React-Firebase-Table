@@ -4,17 +4,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import _ from "lodash";
 import * as actions from "../actions";
-import PersonListItem from "./PersonListItem";
 import * as M from "materialize-css";
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TableFooter, 
-  TablePagination, 
-} from '@material-ui/core'
+import { Table, Input, Button, Icon } from 'antd';
 
 class PersonList extends Component {
   constructor(props) {
@@ -23,6 +14,7 @@ class PersonList extends Component {
     this.handleInputDateChange = this.handleInputDateChange.bind(this);
     this.handleInputEmailChange = this.handleInputEmailChange.bind(this);
     this.handleInputChildrenChange = this.handleInputChildrenChange.bind(this);
+    this.handleRemoveClick = this.handleRemoveClick.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.state = {
       addFormVisible: false,
@@ -30,8 +22,8 @@ class PersonList extends Component {
       birthDateValue: "",
       emailValue: "",
       numberOfChildrenValue: "0",
-      page: 0,
-      rowsPerPage: 5,
+      searchName: '',
+      searchEmail: '',
     };
   }
   
@@ -72,14 +64,6 @@ class PersonList extends Component {
     addPerson({ name: nameValue, birthDate: birthDateValue, email: emailValue, numberOfChildren: numberOfChildrenValue });
     this.setState({ nameValue: "", birthDateValue: "", emailValue: "", numberOfChildrenValue: "0" });
   }
-
-  handleChangePage = (event, page) => {
-    this.setState({ page });
-  }
-
-  handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
-  };
 
   // rendering the form on click of add button, in absolute position bottom the window 
   renderAddForm() {
@@ -153,71 +137,156 @@ class PersonList extends Component {
     }
   }
 
+  // Handling filters in column head (name, email)
+  handleRemoveClick(removePersonId) {
+    const { removePerson } = this.props;
+    removePerson(removePersonId);
+  }
+
+  handleSearchName = (selectedKeys, confirm) => () => {
+    confirm();
+    this.setState({ searchName: selectedKeys[0] });
+  }
+
+  handleResetName = clearFilters => () => {
+    clearFilters();
+    this.setState({ searchName: '' });
+  }
+
+  handleSearchEmail = (selectedKeys, confirm) => () => {
+    confirm();
+    this.setState({ searchEmail: selectedKeys[0] });
+  }
+
+  handleResetEmail = clearFilters => () => {
+    clearFilters();
+    this.setState({ searchEmail: '' });
+  }
+
+  // grid columns, setting custom renders for rows and/or headers
+  // I am setting also filtering or sorting as required in test documentation
+  getColumns() {
+    return [{
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      sorter: (a, b) => { return a.name.localeCompare(b.name) },
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div className="custom-filter-dropdown">
+          <Input
+            ref={ele => this.searchInput = ele}
+            placeholder="Search name"
+            value={selectedKeys[0]}
+            onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onPressEnter={this.handleSearchName(selectedKeys, confirm)}
+          />
+          <Button type="primary" onClick={this.handleSearchName(selectedKeys, confirm)}>Search</Button>
+          <Button onClick={this.handleResetName(clearFilters)}>Reset</Button>
+        </div>
+      ),
+      filterIcon: filtered => <Icon type="filter" style={{ color: filtered ? '#108ee9' : '#aaa' }} />,
+      onFilter: (value, record) => record.name.toLowerCase().includes(value.toLowerCase()),
+      onFilterDropdownVisibleChange: (visible) => {
+        if (visible) {
+          setTimeout(() => {
+            this.searchInput.focus();
+          });
+        }
+      },
+      render: (text) => {
+        const { searchName } = this.state;
+        return searchName ? (
+          <span>
+            {text.split(new RegExp(`(?<=${searchName})|(?=${searchName})`, 'i')).map((fragment, i) => (
+              fragment.toLowerCase() === searchName.toLowerCase()
+                ? <span key={i} className="highlight">{fragment}</span> : fragment // eslint-disable-line
+            ))}
+          </span>
+        ) : text;
+      },
+    }, 
+    {
+      title: 'Birth date',
+      dataIndex: 'birthDate',
+      key: 'birthDate',
+      sorter: (a, b) => { return a.birthDate.localeCompare(b.birthDate) },
+    }, 
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      sorter: (a, b) => { return a.email.localeCompare(b.email) },
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div className="custom-filter-dropdown">
+          <Input
+            ref={ele => this.searchInput = ele}
+            placeholder="Search email"
+            value={selectedKeys[0]}
+            onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onPressEnter={this.handleSearchEmail(selectedKeys, confirm)}
+          />
+          <Button type="primary" onClick={this.handleSearchEmail(selectedKeys, confirm)}>Search</Button>
+          <Button onClick={this.handleResetEmail(clearFilters)}>Reset</Button>
+        </div>
+      ),
+      filterIcon: filtered => <Icon type="filter" style={{ color: filtered ? '#108ee9' : '#aaa' }} />,
+      onFilter: (value, record) => record.email.toLowerCase().includes(value.toLowerCase()),
+      onFilterDropdownVisibleChange: (visible) => {
+        if (visible) {
+          setTimeout(() => {
+            this.searchInput.focus();
+          });
+        }
+      },
+      render: (text) => {
+        const { searchEmail } = this.state;
+        return searchEmail ? (
+          <span>
+            {text.split(new RegExp(`(?<=${searchEmail})|(?=${searchEmail})`, 'i')).map((fragment, i) => (
+              fragment.toLowerCase() === searchEmail.toLowerCase()
+                ? <span key={i} className="highlight">{fragment}</span> : fragment // eslint-disable-line
+            ))}
+          </span>
+        ) : text;
+      },
+    }, 
+    {
+      title: 'Childrens',
+      key: 'numberOfChildren',
+      dataIndex: 'numberOfChildren',
+      sorter: (a, b) => { return a.numberOfChildren.localeCompare(b.numberOfChildren) },
+    }, 
+    {
+      title: '',
+      key: '',
+      render: (text, record) => (
+        <span
+        onClick={() => this.handleRemoveClick(record.key)}
+        className="remove-person-item waves-effect waves-light teal lighten-5 teal-text text-darken-4 btn"
+        >
+          <i className="small material-icons">delete</i>
+        </span>
+      ),
+    }];
+  }
+
+
   // renders the list if not empty, otherwise a message of no data
   renderTable() {
     const { data } = this.props;
-    const { rowsPerPage, page } = this.state;
-    const people = _.map(data, (value, key) => {
-      return <PersonListItem key={key} personId={key} person={value} />;
-    });
 
-    /**
-     * try this https://github.com/carlosrocha/react-data-components
-     * and remove unnecessary dependencies
-     */
+    var arrayData = [];
+    _.each(data, (item, index) => {
+      item.key = index.toString();
+      arrayData.push(item)
+    })
 
     return (
       <div className="col s10 offset-s1 person-list-item">
-        <Table>
-          <TableHead id="peopleList">
-            <TableRow>
-              <TableCell className="with-input">
-                <div className="input-field">                  
-                  <input type="text" id="filterName" onChange={(e) => {
-                      this.props.filterPeople(e.target.value, 'name');;
-                    }} 
-                  />
-                  <i className="small material-icons prefix">filter_list</i>
-                </div>
-                <span>Name</span>
-              </TableCell>
-              <TableCell>
-                <span className="with-top">Birth date</span>
-              </TableCell>
-              <TableCell className="with-input">
-                <div className="input-field">                  
-                  <input type="text" id="filterEmail" onChange={(e) => {
-                      this.props.filterPeople(e.target.value, 'email');;
-                    }} 
-                  />
-                  <i className="small material-icons prefix">filter_list</i>
-                </div>
-                <span>Email</span>
-              </TableCell>
-              <TableCell numeric={true}>
-                <span className="with-top">N° of children</span>
-              </TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {people}
-          </TableBody>
-          <TableFooter>
-              <TableRow>
-                <TablePagination
-                  colSpan={3}
-                  count={people.length}
-                  rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={15}
-                  page={page}
-                  onChangePage={this.handleChangePage}
-                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                />
-              </TableRow>
-          </TableFooter>
-        </Table>
-        {_.isEmpty(people) ? (
+      {!_.isEmpty(arrayData) ? (
+        <Table columns={this.getColumns()} dataSource={arrayData} pagination={{ defaultPageSize: 15 }} />
+      ): ''}
+        {_.isEmpty(arrayData) ? (
             <div className="col s10 offset-s1 center-align">
             {/* image stored on firebase */}
               <img

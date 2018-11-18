@@ -1,7 +1,4 @@
-  .person-list-container {
-    margin-top: 25px;
-  }
-  
+
   .person-list-item {
     margin-top: 10px;
     color: rgb(19, 48, 18);
@@ -13,19 +10,10 @@
     padding-bottom: 5px;
   }
 
-  .person-list-item tr .with-input .input-field {
-    width: 70%;
-    margin: 0 !important;
+  .ant-table-tbody > tr > td {
+    padding: 4px 6px;
   }
   
-  .person-list-item tbody tr:hover {
-    background-color: #69c9bf !important;
-  }
-  .person-list-item thead tr th .with-top {
-    top: 27px;
-    position: relative;
-  }
-
   .remove-person-item {
     float: right;
     right: 20px;
@@ -43,7 +31,12 @@
   .fixed-action-btn label {
     padding-right: 10px;
   }
-  
+  .custom-filter-dropdown {
+    background-color: #fafafa;
+    border: 0.1px solid #eeeeee;
+    padding: 2px;
+  }
+
   @keyframes slidein {
     from {
       opacity: 0;

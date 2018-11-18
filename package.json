@@ -1,18 +1,17 @@
 {
-  "name": "tabular-data-test",
+  "name": "react-firebase-table",
   "version": "0.1.0",
   "private": true,
   "author": "Abdelali Mounsif",
   "dependencies": {
-    "@material-ui/core": "^3.3.1",
+    "antd": "^3.10.3",
     "materialize-css": "^1.0.0-rc.2",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-redux": "^5.0.7",
     "react-scripts": "2.0.5",
     "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0",
-    "underscore": "^1.9.1"
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
