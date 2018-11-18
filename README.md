@@ -15,6 +15,6 @@
 * install yarn in your pc
 * get in the project directory 
 * run:
-  yarn install 
-  yarn start
+  - yarn install 
+  - yarn start
 
